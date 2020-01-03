@@ -5,10 +5,16 @@ const HEAL_VALUE = 20;
 
 const MODE_ATTACK = 'ATTACK'; // or MODE_ATTACK = 0;
 const MODE_STRONG_ATTACK = 'STRONG_ATTACK'; // or MODE_STRONG_ATTACK = 1;
+const LOG_EVENT_PLAYER_ATTACK = 'PLAYER_ATTACK';
+const LOG_EVENT_PLAYER_STRONG_ATTACK = 'PLAYER_STRONG_ATTACK';
+const LOG_EVENT_MONSTER_ATTACK = 'MONSTER_ATTACK';
+const LOG_EVENT_PLAYER_HEAL = 'PLAYER_HEAL';
+const LOG_EVENT_GAME_OVER = 'GAME_OVER';
 
 const enteredValue = prompt('The maximum life for you and the monster', '100');
 
 let chosenMaxLife = parseInt(enteredValue);
+let battleLog = [];
 
 if (isNaN(chosenMaxLife) || chosenMaxLife <= 0) {
   chosenMaxLife = 100;
@@ -19,6 +25,50 @@ let currentPlayerHealth = chosenMaxLife;
 let hasBonusLife = true;
 
 adjustHealthBars(chosenMaxLife);
+
+function writeToLog(ev, val, monsterHealth, playerHealth) {
+  let logEntry = {
+    event: ev,
+    value: val,
+    finalMonsterHealth: monsterHealth,
+    finalPlayerHealth: playerHealth
+  };
+  if (ev === LOG_EVENT_PLAYER_ATTACK) {
+    logEntry.target = 'MONSTER';
+  } else if (ev === LOG_EVENT_PLAYER_STRONG_ATTACK) {
+    logEntry = {
+      event: ev,
+      value: val,
+      target: 'MONSTER',
+      finalMonsterHealth: monsterHealth,
+      finalPlayerHealth: playerHealth
+    };
+  } else if (ev === LOG_EVENT_MONSTER_ATTACK) {
+    logEntry = {
+      event: ev,
+      value: val,
+      target: 'PLAYER',
+      finalMonsterHealth: monsterHealth,
+      finalPlayerHealth: playerHealth
+    };
+  } else if (ev === LOG_EVENT_PLAYER_HEAL) {
+    logEntry = {
+      event: ev,
+      value: val,
+      target: 'PLAYER',
+      finalMonsterHealth: monsterHealth,
+      finalPlayerHealth: playerHealth
+    };
+  } else if (ev === LOG_EVENT_GAME_OVER) {
+    logEntry = {
+      event: ev,
+      value: val,
+      finalMonsterHealth: monsterHealth,
+      finalPlayerHealth: playerHealth
+    };
+  }
+  battleLog.push(logEntry);
+}
 
 function reset() {
   currentMonsterHealth = chosenMaxLife;
